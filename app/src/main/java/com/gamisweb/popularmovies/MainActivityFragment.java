@@ -1,10 +1,12 @@
 package com.gamisweb.popularmovies;
 
 import android.content.SharedPreferences;
+import android.graphics.Path;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,17 +26,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
-    static final String API_KEY = "";
     SharedPreferences sharedPref;
     MovieAdapter movieAdapter;
     ArrayList<Movie> myMovies;
-    //Movie[] myMovies;
 
     public MainActivityFragment() {
     }
@@ -95,13 +96,13 @@ public class MainActivityFragment extends Fragment {
             final String SORT_PARAM = "sort_by";
             final String APIKEY_PARAM = "api_key";
 
+            //build URI and fetch data from themoviedb
             try
-
             {
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL)
                         .buildUpon()
                         .appendQueryParameter(SORT_PARAM, "popularity.desc")
-                        .appendQueryParameter(APIKEY_PARAM, API_KEY)
+                        .appendQueryParameter(APIKEY_PARAM, getString(R.string.API_KEY))
                         .build();
 
                 URL url = new URL(builtUri.toString());
@@ -158,7 +159,6 @@ public class MainActivityFragment extends Fragment {
                 Log.e("LOG_TAG", e.getMessage(), e);
                 e.printStackTrace();
             }
-            //String[] tempReturnArray = new String[testArrayList.size()];
             return results;
         }
 
@@ -166,10 +166,8 @@ public class MainActivityFragment extends Fragment {
         protected void onPostExecute(ArrayList<Movie> results) {
             try {
                 if(results != null) {
-                    Log.v(LOG_TAG,"There are " + Integer.toString(results.size()) + " items");
-                    //add our array of strings to the the forecast
+                    //update our movie adapter with the new collection of movies
                     movieAdapter.setMovies(results);
-                    ((BaseAdapter)movieAdapter).notifyDataSetChanged();
                 }
 
             } catch (final Exception e) {

@@ -37,6 +37,7 @@ public class MovieAdapter extends BaseAdapter {
 
     public void add(Movie newMovie){
         movies.add(newMovie);
+        notifyDataSetChanged();
     }
 
     public void clear(){
@@ -45,6 +46,7 @@ public class MovieAdapter extends BaseAdapter {
 
     public void setMovies(ArrayList<Movie> _movies){
         movies = _movies;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -73,7 +75,7 @@ public class MovieAdapter extends BaseAdapter {
             //Initialize ImageView
             ImageView imageView = (ImageView) gridView.findViewById(R.id.imageView);
 
-//Loading image from below url into imageView
+            //Loading image from below url into imageView
             WindowManager wm = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
             Display display = wm.getDefaultDisplay();
             Point size = new Point();

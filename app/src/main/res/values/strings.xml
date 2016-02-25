@@ -1,6 +1,20 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="action_settings">Settings</string>
     <string name="test_string">This is a test</string>
+
+
+
+    <!-- Strings related to Settings -->
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
     <string name="action_do">Do Someting</string>
+
+    <!-- Strings related to preferences-->
+
+    <!-- Sort Preferences-->
+    <string name="pref_sort_default">popular</string>
+    <string name="pref_sort_label">Sort Method</string>
+    <string name="pref_sort_key">sort</string>
+
+
 </resources>
