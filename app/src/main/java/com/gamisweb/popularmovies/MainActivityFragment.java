@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
     SharedPreferences sharedPref;
     MovieAdapter movieAdapter;
-    ArrayList<Movie> myMovies;
+    //ArrayList<Movie> myMovies;
 
     public MainActivityFragment() {
     }
@@ -54,6 +55,10 @@ public class MainActivityFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            getMovieData();
+        }
+
 
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
@@ -63,9 +68,7 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        movieAdapter = new MovieAdapter(getActivity(), myMovies);
-        GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
-        gridview.setAdapter(movieAdapter);
+        movieAdapter = new MovieAdapter(getActivity(),R.id.gridview,new ArrayList<Movie>());
         return rootView;
     }
 
@@ -77,15 +80,16 @@ public class MainActivityFragment extends Fragment {
 
     public void getMovieData(){
         FetchMovieData movieTask = new FetchMovieData();
-        movieTask.execute();
+        String sort = sharedPref.getString("sort", "popularity.desc");
+        movieTask.execute(sort);
 
     }
 
-    public class FetchMovieData extends AsyncTask<Void, Void, ArrayList<Movie>> {
+    public class FetchMovieData extends AsyncTask<String, Void, ArrayList<Movie>> {
         private final String LOG_TAG = FetchMovieData.class.getSimpleName();
 
         @Override
-        protected ArrayList<Movie> doInBackground(Void... params) {
+        protected ArrayList<Movie> doInBackground(String... params) {
             Log.v(LOG_TAG, "do'n in background");
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -94,18 +98,22 @@ public class MainActivityFragment extends Fragment {
             //Build our URL
             final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
             final String SORT_PARAM = "sort_by";
+            final String COUNT_PARAM = "vote_count.gte";
             final String APIKEY_PARAM = "api_key";
+
 
             //build URI and fetch data from themoviedb
             try
             {
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL)
                         .buildUpon()
-                        .appendQueryParameter(SORT_PARAM, "popularity.desc")
+                        .appendQueryParameter(SORT_PARAM, params[0])
+                        .appendQueryParameter(COUNT_PARAM, "100")//only return if count >= 100
                         .appendQueryParameter(APIKEY_PARAM, getString(R.string.API_KEY))
                         .build();
 
                 URL url = new URL(builtUri.toString());
+                Log.v(LOG_TAG, builtUri.toString());
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -165,9 +173,13 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> results) {
             try {
+                ((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
                 if(results != null) {
                     //update our movie adapter with the new collection of movies
                     movieAdapter.setMovies(results);
+
+                }else{
+                    Log.e(LOG_TAG, "Results was null");
                 }
 
             } catch (final Exception e) {

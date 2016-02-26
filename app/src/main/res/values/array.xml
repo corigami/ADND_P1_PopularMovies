@@ -7,7 +7,7 @@
     </string-array>
     <string-array
         name="pref_sort_choice_values">
-        <item>popular</item>
-        <item>rating</item>
+        <item>popularity.desc</item>
+        <item>vote_average.desc</item>
     </string-array>
 </resources>
