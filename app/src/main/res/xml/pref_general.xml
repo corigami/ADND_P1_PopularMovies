@@ -9,5 +9,4 @@
         android:entries="@array/pref_sort_choice_entries"
         android:entryValues="@array/pref_sort_choice_values"
         android:defaultValue="@string/pref_sort_default" />
-
 </PreferenceScreen>

@@ -1,42 +1,38 @@
 package com.gamisweb.popularmovies;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Path;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
+import android.widget.AdapterView;
 import android.widget.GridView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+    static final String API_KEY = "";
     SharedPreferences sharedPref;
     MovieAdapter movieAdapter;
-    //ArrayList<Movie> myMovies;
+    ArrayList<Movie> myMovies = new ArrayList<Movie>();
 
     public MainActivityFragment() {
     }
@@ -55,10 +51,6 @@ public class MainActivityFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            getMovieData();
-        }
-
 
         //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
@@ -68,17 +60,28 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        movieAdapter = new MovieAdapter(getActivity(),R.id.gridview,new ArrayList<Movie>());
+        movieAdapter = new MovieAdapter(getActivity(),R.id.gridview, myMovies);
+
+        GridView gridview =(GridView) rootView.findViewById(R.id.gridview);
+        gridview.setAdapter(movieAdapter);
+        gridview.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class);
+                detailIntent.putExtra("Movie", myMovies.get(position));
+                startActivity(detailIntent);
+            }
+        });
         return rootView;
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         getMovieData();
     }
 
-    public void getMovieData(){
+    public void getMovieData() {
         FetchMovieData movieTask = new FetchMovieData();
         String sort = sharedPref.getString("sort", "popularity.desc");
         movieTask.execute(sort);
@@ -102,18 +105,18 @@ public class MainActivityFragment extends Fragment {
             final String APIKEY_PARAM = "api_key";
 
 
-            //build URI and fetch data from themoviedb
             try
+
             {
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL)
                         .buildUpon()
                         .appendQueryParameter(SORT_PARAM, params[0])
                         .appendQueryParameter(COUNT_PARAM, "100")//only return if count >= 100
-                        .appendQueryParameter(APIKEY_PARAM, getString(R.string.API_KEY))
+                        .appendQueryParameter(APIKEY_PARAM, getContext().getString(R.string.API_KEY))
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, builtUri.toString());
+                Log.v(LOG_TAG,builtUri.toString());
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -161,9 +164,9 @@ public class MainActivityFragment extends Fragment {
             }
 
             ArrayList<Movie> results = new ArrayList<>();
-            try{
+            try {
                 results = getMovieDataFromJson(movieJsonStr);
-            }catch(JSONException e){
+            } catch (JSONException e) {
                 Log.e("LOG_TAG", e.getMessage(), e);
                 e.printStackTrace();
             }
@@ -173,19 +176,23 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> results) {
             try {
-                ((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
-                if(results != null) {
-                    //update our movie adapter with the new collection of movies
-                    movieAdapter.setMovies(results);
+                //((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
+                //declaring onItemClickListen in-place...
 
-                }else{
-                    Log.e(LOG_TAG, "Results was null");
+                if (results != null) {
+                    //only update the UI if the results don't match the array
+                    if(myMovies == null || !myMovies.containsAll(results)) {
+                        ((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
+                        myMovies = results;
+                        movieAdapter.setMovies(myMovies);
+                        Log.v(LOG_TAG,"my movies and results not the same...");
+                    }
                 }
 
             } catch (final Exception e) {
                 Log.e(LOG_TAG, "Couldn't convert JSON object");
+                Log.e(LOG_TAG, e.getMessage());
             }
-
         }
 
         /**
@@ -200,72 +207,46 @@ public class MainActivityFragment extends Fragment {
 
             // These are the names of the JSON objects that need to be extracted.
             final String TMDB_ID = "id";
-            final String TMDB_TITLE = "title";
+            final String TMDB_TITLE = "original_title";
             final String TMDB_POPULARITY = "popularity";
             final String TMDB_VOTE_COUNT = "vote_count";
             final String TMDB_VOTE_AVG = "vote_average";
             final String TMDB_POSTER_PATH = "poster_path";
+            final String TMDB_OVERVIEW = "overview";
             final String TMDB_RESULTS = "results";
+            final String TMDB_RELEASE = "release_date";
 
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieJsonArray = movieJson.getJSONArray(TMDB_RESULTS);
 
             ArrayList<Movie> tempArrayList = new ArrayList<Movie>();
-            for(int i = 0; i < movieJsonArray.length(); i++){
+
+            for (int i = 0; i < movieJsonArray.length(); i++) {
                 JSONObject tempJsonObj = movieJsonArray.getJSONObject(i);
                 String tempId = tempJsonObj.getString(TMDB_ID);
 
                 //only create a movie object if an id string is returned.
-                if(tempId != null && !tempId.isEmpty()){
-                    Movie tempMovie = new Movie(Integer.parseInt(tempId),tempJsonObj.getString(TMDB_TITLE));
+                if (tempId != null && !tempId.isEmpty()) {
+                    final Movie tempMovie = new Movie(Integer.parseInt(tempId), tempJsonObj.getString(TMDB_TITLE));
                     float popularity = Float.parseFloat(tempJsonObj.getString(TMDB_POPULARITY));
                     tempMovie.setPopularity(Math.round(popularity));
-                    tempMovie.setVoteCount(Integer.parseInt(tempJsonObj.getString(TMDB_VOTE_COUNT)));
                     float voteAvg = Float.parseFloat(tempJsonObj.getString(TMDB_VOTE_AVG));
+                    tempMovie.setVoteCount(Integer.parseInt(tempJsonObj.getString(TMDB_VOTE_COUNT)));
                     tempMovie.setVoteAvg(Math.round(voteAvg));
-                    tempMovie.setPosterPath(tempJsonObj.getString(TMDB_POSTER_PATH));
-
+                    tempMovie.setOverview(tempJsonObj.getString(TMDB_OVERVIEW));
+                    //build the path to use with Picasso
+                    String urlString = "http://image.tmdb.org/t/p/w185/";
+                    urlString += tempJsonObj.getString(TMDB_POSTER_PATH);
+                    tempMovie.setPosterPath(urlString);
+                    tempMovie.setReleaseDate(tempJsonObj.getString(TMDB_RELEASE));
                     tempArrayList.add(tempMovie);
+
                 }
             }
             return tempArrayList;
 
-
-            /*
-            for (int i = 0; i < weatherArray.length(); i++) {
-                // For now, using the format "Day, description, hi/low"
-                String day;
-                String description;
-                String highAndLow;
-
-                // Get the JSON object representing the day
-                JSONObject dayForecast = weatherArray.getJSONObject(i);
-
-                // The date/time is returned as a long.  We need to convert that
-                // into something human-readable, since most people won't read "1400356800" as
-                // "this saturday".
-                long dateTime;
-                // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay + i);
-                day = getReadableDateString(dateTime);
-
-                // description is in a child array called "weather", which is 1 element long.
-                JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                description = weatherObject.getString(OWM_DESCRIPTION);
-
-                // Temperatures are in a child object called "temp".  Try not to name variables
-                // "temp" when working with temperature.  It confuses everybody.
-                JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-                double high = temperatureObject.getDouble(OWM_MAX);
-                double low = temperatureObject.getDouble(OWM_MIN);
-
-                highAndLow = formatHighLows(high, low);
-                resultStrs[i] = day + " - " + description + " - " + highAndLow;
-            }
-            */
-
         }
+
     }
-
-
 }
+

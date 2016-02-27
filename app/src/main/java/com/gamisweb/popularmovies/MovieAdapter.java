@@ -24,13 +24,6 @@ public class MovieAdapter extends ArrayAdapter {
     private Context mContext;
     private ArrayList<Movie> movies;
 
-/*
-    public MovieAdapter(Context c, ArrayList<Movie> _movies){
-        mContext = c;
-        movies = _movies;
-    }
-*/
-
     public MovieAdapter(Context c, int resource, ArrayList<Movie> _movies) {
         super(c, resource, _movies);
         mContext = c;
@@ -40,7 +33,7 @@ public class MovieAdapter extends ArrayAdapter {
     @Override
     public int getCount() {
         if(movies != null)
-         return movies.size();
+            return movies.size();
         else return 0;
     }
 
@@ -76,9 +69,9 @@ public class MovieAdapter extends ArrayAdapter {
     public long getItemId(int position) {
         return position;
     }
-
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
+
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View gridView;
 
@@ -86,7 +79,7 @@ public class MovieAdapter extends ArrayAdapter {
 
             gridView = new View(mContext);
 
-            // get layout from movie_tile.xml
+            // get layout from mobile.xml
             gridView = inflater.inflate(R.layout.movie_tile, null);
 
             //Initialize ImageView
@@ -100,12 +93,9 @@ public class MovieAdapter extends ArrayAdapter {
             int width = size.x;
             width = (int) width/2;
 
-
-            String urlString = "http://image.tmdb.org/t/p/w185/";
-            urlString +=  movies.get(position).getPosterPath();
             Picasso.with(mContext)
-                    .load(urlString)
-                    .resize(width,(int)(width*1.5))
+                    .load(movies.get(position).getPosterPath())
+                    .resize(width, (int) (width * 1.5))
                     .into(imageView);
 
         } else {

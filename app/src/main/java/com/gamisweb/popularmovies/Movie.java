@@ -1,16 +1,25 @@
 package com.gamisweb.popularmovies;
 
+import android.graphics.Bitmap;
+
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * Movie object to store data
  * Created by corey on 2/18/2016.
  */
-public class Movie {
+public class Movie implements Serializable {
     private int id;
     private String title;
     private int popularity;
     private int voteCount;
     private float voteAvg;
     private String posterPath;
+    private String overview;
+    private String releaseDate;
+
+    private Bitmap image;
 
     public Movie() {
     }
@@ -56,6 +65,40 @@ public class Movie {
 
     public void setPosterPath(String posterPath) {
         this.posterPath = posterPath;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getReleaseDate() {
+        return releaseDate;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public Bitmap getImage() {
+        return image;
+    }
+
+    public void setImage(Bitmap image) {
+        this.image = image;
+    }
+
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     /**

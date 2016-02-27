@@ -1,12 +1,17 @@
 package com.gamisweb.popularmovies;
 
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 public class MainActivity extends ActionBarActivity {
     private SharedPreferences sharedPref;
@@ -21,6 +26,7 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
     }
 
     @Override
