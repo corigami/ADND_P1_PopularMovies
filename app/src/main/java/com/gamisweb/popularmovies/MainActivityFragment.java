@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,14 +27,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainActivityFragment extends Fragment {
     static final String API_KEY = "";
     SharedPreferences sharedPref;
     MovieAdapter movieAdapter;
-    ArrayList<Movie> myMovies = new ArrayList<Movie>();
 
     public MainActivityFragment() {
     }
@@ -47,9 +45,6 @@ public class MainActivityFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -60,15 +55,15 @@ public class MainActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        movieAdapter = new MovieAdapter(getActivity(),R.id.gridview, myMovies);
+        movieAdapter = new MovieAdapter(getActivity(), R.id.gridview, new ArrayList<Movie>());
 
-        GridView gridview =(GridView) rootView.findViewById(R.id.gridview);
+        GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(movieAdapter);
         gridview.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent detailIntent = new Intent(getActivity(), MovieDetailActivity.class);
-                detailIntent.putExtra("Movie", myMovies.get(position));
+                detailIntent.putExtra("Movie", movieAdapter.getItem(position));
                 startActivity(detailIntent);
             }
         });
@@ -105,9 +100,7 @@ public class MainActivityFragment extends Fragment {
             final String APIKEY_PARAM = "api_key";
 
 
-            try
-
-            {
+            try {
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL)
                         .buildUpon()
                         .appendQueryParameter(SORT_PARAM, params[0])
@@ -116,7 +109,7 @@ public class MainActivityFragment extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG,builtUri.toString());
+                Log.v(LOG_TAG, builtUri.toString());
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -176,32 +169,22 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<Movie> results) {
             try {
-                //((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
-                //declaring onItemClickListen in-place...
 
                 if (results != null) {
                     //only update the UI if the results don't match the array
-                    if(myMovies == null || !myMovies.containsAll(results)) {
+                    if (movieAdapter.getCount() == 0 || movieAdapter.getItem(0).getId() != results.get(0).getId()) {
+                        movieAdapter.clear();
+                        movieAdapter.add(results);
                         ((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
-                        myMovies = results;
-                        movieAdapter.setMovies(myMovies);
-                        Log.v(LOG_TAG,"my movies and results not the same...");
+                        movieAdapter.notifyDataSetChanged();
                     }
                 }
 
             } catch (final Exception e) {
-                Log.e(LOG_TAG, "Couldn't convert JSON object");
-                Log.e(LOG_TAG, e.getMessage());
+                Log.e(LOG_TAG, "Error updating display", e);
             }
         }
 
-        /**
-         * Take the String representing the complete forecast in JSON Format and
-         * pull out the data we need to construct the Strings needed for the wireframes.
-         * <p/>
-         * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-         * into an Object hierarchy for us.
-         */
         private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
 
@@ -244,9 +227,7 @@ public class MainActivityFragment extends Fragment {
                 }
             }
             return tempArrayList;
-
         }
-
     }
 }
 

@@ -11,7 +11,9 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class MovieAdapter extends ArrayAdapter {
 
     @Override
     public int getCount() {
-        if(movies != null)
+        if (movies != null)
             return movies.size();
         else return 0;
     }
@@ -42,33 +44,35 @@ public class MovieAdapter extends ArrayAdapter {
         return movies.get(position);
     }
 
-    public void add(Movie newMovie){
+    public void add(Movie newMovie) {
         movies.add(newMovie);
         notifyDataSetChanged();
     }
 
-    public void add(ArrayList<Movie> newMovies){
-        for (Movie m: newMovies){
+    public void add(ArrayList<Movie> newMovies) {
+        for (Movie m : newMovies) {
             movies.add(m);
         }
         notifyDataSetChanged();
     }
 
-    public void clear(){
-        movies = null;
-        notifyDataSetChanged();
-    }
-
-    public void setMovies(ArrayList<Movie> _movies){
-        movies = new ArrayList<>(_movies);
+    public void setMovies(ArrayList<Movie> _movies) {
+        movies = _movies;
         notifyDataSetChanged();
         Log.v(LOG_TAG, "Data was just changed");
+    }
+
+    @Override
+    public void clear() {
+        movies.clear();
+        notifyDataSetChanged();
     }
 
     @Override
     public long getItemId(int position) {
         return position;
     }
+
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
@@ -91,7 +95,7 @@ public class MovieAdapter extends ArrayAdapter {
             Point size = new Point();
             display.getSize(size);
             int width = size.x;
-            width = (int) width/2;
+            width = (int) width / 2;
 
             Picasso.with(mContext)
                     .load(movies.get(position).getPosterPath())
