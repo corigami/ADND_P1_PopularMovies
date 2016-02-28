@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2016 Corey T. Willinger - Some Rights Reserved
+ */
 package com.gamisweb.popularmovies;
 
 import android.content.Intent;
@@ -27,14 +30,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * The main fragment to be loaded by {@link MainActivity}, loaded on app start.
+ */
 public class MainActivityFragment extends Fragment {
     static final String API_KEY = "";
-    SharedPreferences sharedPref;
-    MovieAdapter movieAdapter;
+    private SharedPreferences sharedPref;
+    private MovieAdapter movieAdapter;
 
     public MainActivityFragment() {
     }
 
+    /**
+     * Called when Activity is created.
+     * @param savedInstanceState the state of class throughout the application life-cycle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,14 +53,26 @@ public class MainActivityFragment extends Fragment {
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
+
+    /**
+     * Provides logic to be executed when menu item is selected.
+     * @param item the user selected option from settings menu
+     * @return the response from parent method
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Loads the fragments view.  Also sets the gridView adapter to custom {@link MovieAdapter}.
+     * @param inflater the inflater object used to expand the view from xml
+     * @param container the object to attach the view to.
+     * @param savedInstanceState stores the app state during app life-cycle
+     * @return the root view of the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +81,8 @@ public class MainActivityFragment extends Fragment {
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(movieAdapter);
+
+        //adds click listener that loads the detail activity for the selected movie
         gridview.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -76,6 +100,10 @@ public class MainActivityFragment extends Fragment {
         getMovieData();
     }
 
+
+    /**
+     * Starts the background request for movie data based on sort settings.
+     */
     public void getMovieData() {
         FetchMovieData movieTask = new FetchMovieData();
         String sort = sharedPref.getString("sort", "popularity.desc");
@@ -83,6 +111,9 @@ public class MainActivityFragment extends Fragment {
 
     }
 
+    /**
+     * Requests data from the theMovieDataBase using the site's APIs.
+     */
     public class FetchMovieData extends AsyncTask<String, Void, ArrayList<Movie>> {
         private final String LOG_TAG = FetchMovieData.class.getSimpleName();
 
@@ -93,14 +124,14 @@ public class MainActivityFragment extends Fragment {
             BufferedReader reader = null;
 
             String movieJsonStr = null;
-            //Build our URL
+            //Fields required for the request URL
             final String MOVIE_BASE_URL = "http://api.themoviedb.org/3/discover/movie?";
             final String SORT_PARAM = "sort_by";
             final String COUNT_PARAM = "vote_count.gte";
             final String APIKEY_PARAM = "api_key";
 
-
             try {
+                //build the uri using set parameters.
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL)
                         .buildUpon()
                         .appendQueryParameter(SORT_PARAM, params[0])
@@ -109,7 +140,6 @@ public class MainActivityFragment extends Fragment {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.v(LOG_TAG, builtUri.toString());
                 // Create the request to TheMovieDb, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");

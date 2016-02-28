@@ -24,8 +24,9 @@ public class MainActivity extends ActionBarActivity {
     private SharedPreferences sharedPref;
 
     /**
-     * Called when Activity is created.
-     * @param savedInstanceState the state of class throughout the application life-cycle
+     * Called when Activity is created.  Loads {@link MainActivityFragment} on start and sets
+     * shared preferences object.
+     * @param savedInstanceState stores the app state during app life-cycle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,17 +55,13 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * Provides logic to be executed when menu item is selected.
-     * @param item the user selected option from menu
-     * @return  a boolean value
+     * @param item the user selected option from settings menu
+     * @return the response from parent method
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
