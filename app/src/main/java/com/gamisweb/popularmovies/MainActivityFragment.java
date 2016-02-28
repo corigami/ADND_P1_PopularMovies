@@ -185,7 +185,7 @@ public class MainActivityFragment extends Fragment {
             }
         }
 
-        private ArrayList<Movie> getMovieDataFromJson(String movieJsonStr)
+        public ArrayList<Movie> getMovieDataFromJson(String movieJsonStr)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.

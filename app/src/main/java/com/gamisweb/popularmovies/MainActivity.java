@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2016 Corey T. Willinger - Some Rights Reserved
+ */
+
 package com.gamisweb.popularmovies;
 
 import android.app.Application;
@@ -13,8 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+/**
+ * Proivdes starting point for application.  Must be identified in Manifest as such.
+ */
 public class MainActivity extends ActionBarActivity {
     private SharedPreferences sharedPref;
+
+    /**
+     * Called when Activity is created.
+     * @param savedInstanceState the state of class throughout the application life-cycle
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,9 +38,13 @@ public class MainActivity extends ActionBarActivity {
                     .commit();
         }
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
     }
 
+    /**
+     * Loads when optionsMenu is created by underlying system.
+     * @param menu stores menu object to be inflated,
+     * @return boolean value (default true)
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -36,6 +52,11 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
+    /**
+     * Provides logic to be executed when menu item is selected.
+     * @param item the user selected option from menu
+     * @return  a boolean value
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
