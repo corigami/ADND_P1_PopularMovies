@@ -1,3 +1,6 @@
+/*
+ * Copyright (C) 2016 Corey T. Willinger - Some Rights Reserved
+ */
 package com.gamisweb.popularmovies;
 
 import android.graphics.Bitmap;
@@ -6,7 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Movie object to store data
+ * Movie object to store movie data
  * Created by corey on 2/18/2016.
  */
 public class Movie implements Serializable {
@@ -103,9 +106,9 @@ public class Movie implements Serializable {
 
     /**
      * Returns string to uniquely identify Movie object.
-     * @return string composition of id, title, and posterPath
+     * @return string the composition of id and title
      */
     public String toString(){
-        return id + ", " + title + ", " + posterPath;
+        return id + ", " + title;
     }
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 
 /**
+ * Extends the ArrayAdapter class to paint {@link Movie} details.
  * Created by corey on 2/22/2016.
  */
 public class MovieAdapter extends ArrayAdapter {
@@ -26,12 +27,22 @@ public class MovieAdapter extends ArrayAdapter {
     private Context mContext;
     private ArrayList<Movie> movies;
 
+    /**
+     * Constructs the MovieAdapter object.
+     * @param c the application context
+     * @param resource the default view to be populated by the Adapter
+     * @param _movies {@link ArrayList} of {@code Movie}s
+     */
     public MovieAdapter(Context c, int resource, ArrayList<Movie> _movies) {
         super(c, resource, _movies);
         mContext = c;
         movies = _movies;
     }
 
+    /**
+     * Returns the number of movies in the underlying container
+     * @return an {@link Integer} of the number of objects
+     */
     @Override
     public int getCount() {
         if (movies != null)
@@ -39,8 +50,14 @@ public class MovieAdapter extends ArrayAdapter {
         else return 0;
     }
 
+    /**
+     * Returns the {@link Movie} at the given position
+     * @param position the index to retrieve from the arrayList
+     * @return a {@code Movie} object
+     * @throws IndexOutOfBoundsException
+     */
     @Override
-    public Movie getItem(int position) {
+    public Movie getItem(int position) throws IndexOutOfBoundsException{
         return movies.get(position);
     }
 
@@ -49,6 +66,11 @@ public class MovieAdapter extends ArrayAdapter {
         notifyDataSetChanged();
     }
 
+
+    /**
+     * Adds an ArrayList of Movies to the current container
+     * @param newMovies the {@link ArrayList} of {@link Movie}s to add
+     */
     public void add(ArrayList<Movie> newMovies) {
         for (Movie m : newMovies) {
             movies.add(m);
@@ -56,6 +78,10 @@ public class MovieAdapter extends ArrayAdapter {
         notifyDataSetChanged();
     }
 
+    /**
+     * Replaces the current list of movies with a new set
+     * @param _movies the new {@link ArrayList} of {@link Movie}s to use in the adpater
+     */
     public void setMovies(ArrayList<Movie> _movies) {
         movies = _movies;
         notifyDataSetChanged();
@@ -73,6 +99,13 @@ public class MovieAdapter extends ArrayAdapter {
         return position;
     }
 
+    /**
+     * Returns {@link View} to be displayed
+     * @param position the index of the {@link Movie} to be rendered
+     * @param convertView {@code View} to be used instead of generating new view (if not @code null)
+     * @param parent the parent ViewGroup of the view that will be created.
+     * @return
+     */
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
