@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2016 Corey T. Willinger - No Rights Reserved
+ */
+
 package com.gamisweb.popularmovies;
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Corey T. Willinger - Some Rights Reserved
+ * Copyright (C) 2016 Corey T. Willinger - No Rights Reserved
  */
 package com.gamisweb.popularmovies;
 
@@ -37,7 +37,6 @@ public class MainActivityFragment extends Fragment {
     static final String API_KEY = "";
     private SharedPreferences sharedPref;
     private MovieAdapter movieAdapter;
-
     public MainActivityFragment() {
     }
 
@@ -203,10 +202,11 @@ public class MainActivityFragment extends Fragment {
                 if (results != null) {
                     //only update the UI if the results don't match the array
                     if (movieAdapter.getCount() == 0 || movieAdapter.getItem(0).getId() != results.get(0).getId()) {
+
                         movieAdapter.clear();
-                        movieAdapter.add(results);
+                        movieAdapter.addAll(results);
                         ((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
-                        movieAdapter.notifyDataSetChanged();
+
                     }
                 }
 

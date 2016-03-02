@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2016 Corey T. Willinger - No Rights Reserved
+ */
+
 package com.gamisweb.popularmovies;
 
 import android.content.Context;
@@ -23,7 +27,10 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-
+/**
+ * The fragment displays detailed information about movie selected from the main screen.
+ * Load when {@link MovieDetailActivity} is created.
+ */
 public class MovieDetailActivityFragment extends Fragment {
     private static final String LOG_TAG = MovieDetailActivityFragment.class.getSimpleName();
     Context mContext = getContext();
@@ -33,17 +40,33 @@ public class MovieDetailActivityFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Default constructor.
+     * @param savedInstanceState the state of class throughout the application life-cycle
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+    /**
+     * Called when the option menu is created.
+     * @param menu the menu object to be inflated to.
+     * @param inflater the inflater from the owning activity
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.movie_detail_frag_menu, menu);
     }
 
+    /**
+     * Creates the view for the fragment
+     * @param inflater the inflater from the owning activity
+     * @param container the parent container
+     * @param savedInstanceState the state of class throughout the application life-cycle
+     * @return the view that was created
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,7 +80,9 @@ public class MovieDetailActivityFragment extends Fragment {
         //get screen information to set size of viewImage
 
 
-        //Duplicate code from main activity, not sure how to cache images from inital call...
+        //Duplicate code from main activity, not sure how to cache images from initial call...
+        //TODO Optimize this code to use cached images from Picasso
+        //Calculate window size for setting
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
