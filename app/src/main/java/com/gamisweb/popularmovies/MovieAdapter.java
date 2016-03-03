@@ -5,6 +5,7 @@ package com.gamisweb.popularmovies;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.Display;
@@ -68,17 +69,23 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
             ImageView imageView = (ImageView) gridView.findViewById(R.id.imageView);
 
             //Loading image from below url into imageView
-            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            int width = size.x;
-            width = (int) width / 2;
+            DisplayUtil dispUtil = new DisplayUtil((getContext()));
+            int imgWidth;
+            int imgHeight;
+            if(dispUtil.getOrientation() == 1){
+                imgWidth = (int)dispUtil.getDisplaySize().x /2;
+
+            }else{
+               imgWidth = (int)(dispUtil.getDisplaySize().x /3);
+                 }
+            imgHeight = (int)(imgWidth * 1.5);
+
 
             if(movies!= null) {
-                Picasso.with(getContext())
+               Picasso.with(getContext())
                         .load(movies.get(position).getPosterPath())
-                        .resize(width, (int) (width * 1.5))
+                    //    .centerCrop()
+                        .resize(imgWidth, imgHeight)
                         .into(imageView);
             }
 
@@ -88,4 +95,5 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         return gridView;
     }
+
 }

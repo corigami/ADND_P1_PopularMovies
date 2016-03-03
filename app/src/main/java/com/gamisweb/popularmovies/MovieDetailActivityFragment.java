@@ -47,17 +47,7 @@ public class MovieDetailActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
 
-    /**
-     * Called when the option menu is created.
-     * @param menu the menu object to be inflated to.
-     * @param inflater the inflater from the owning activity
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.movie_detail_frag_menu, menu);
     }
 
     /**

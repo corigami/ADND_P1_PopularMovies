@@ -25,14 +25,4 @@ public class MovieDetailActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Called when the option menu is created.
-     * @param menu the menu object to be inflated to.
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main_frag_menu, menu);
-        return true;
-    }
 }

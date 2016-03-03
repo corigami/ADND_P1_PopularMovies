@@ -3,18 +3,24 @@
  */
 package com.gamisweb.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -54,6 +60,17 @@ public class MainActivityFragment extends Fragment {
 
 
     /**
+     * Called when the option menu is created.
+     * @param menu the menu object to be inflated to.
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.main_frag_menu, menu);
+        //getMenuInflater().inflate(R.menu.main_frag_menu, menu);
+    }
+
+    /**
      * Provides logic to be executed when menu item is selected.
      * @param item the user selected option from settings menu
      * @return the response from parent method
@@ -61,6 +78,10 @@ public class MainActivityFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
+        if(id == R.id.action_refresh){
+            getMovieData();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -80,6 +101,11 @@ public class MainActivityFragment extends Fragment {
 
         GridView gridview = (GridView) rootView.findViewById(R.id.gridview);
         gridview.setAdapter(movieAdapter);
+        DisplayUtil displayUtil = new DisplayUtil(getContext());
+        if(displayUtil.getOrientation()==1)
+            gridview.setNumColumns(2);
+        else
+            gridview.setNumColumns(3);
 
         //adds click listener that loads the detail activity for the selected movie
         gridview.setOnItemClickListener(new android.widget.AdapterView.OnItemClickListener() {
@@ -234,6 +260,8 @@ public class MainActivityFragment extends Fragment {
 
             ArrayList<Movie> tempArrayList = new ArrayList<Movie>();
 
+
+
             for (int i = 0; i < movieJsonArray.length(); i++) {
                 JSONObject tempJsonObj = movieJsonArray.getJSONObject(i);
                 String tempId = tempJsonObj.getString(TMDB_ID);
@@ -248,7 +276,7 @@ public class MainActivityFragment extends Fragment {
                     tempMovie.setVoteAvg(Math.round(voteAvg));
                     tempMovie.setOverview(tempJsonObj.getString(TMDB_OVERVIEW));
                     //build the path to use with Picasso
-                    String urlString = "http://image.tmdb.org/t/p/w185/";
+                    String urlString = "http://image.tmdb.org/t/p/w300/";
                     urlString += tempJsonObj.getString(TMDB_POSTER_PATH);
                     tempMovie.setPosterPath(urlString);
                     tempMovie.setReleaseDate(tempJsonObj.getString(TMDB_RELEASE));
