@@ -5,24 +5,14 @@ package com.gamisweb.popularmovies;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.graphics.Point;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
-
 import com.squareup.picasso.Picasso;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Extends the ArrayAdapter class to paint {@link Movie} details.
@@ -41,7 +31,6 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
     public MovieAdapter(Context c, int resource, ArrayList<Movie> _movies) {
         super(c, resource, _movies);
         movies = _movies;
-
     }
 
         /**
@@ -60,8 +49,6 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
         if (convertView == null) {
 
-            gridView = new View(getContext());
-
             // get layout from mobile.xml
             gridView = inflater.inflate(R.layout.movie_tile, null);
 
@@ -74,26 +61,22 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
             int imgHeight;
             if(dispUtil.getOrientation() == 1){
                 imgWidth = (int)dispUtil.getDisplaySize().x /2;
-
             }else{
                imgWidth = (int)(dispUtil.getDisplaySize().x /3);
                  }
             imgHeight = (int)(imgWidth * 1.5);
 
-
             if(movies!= null) {
                Picasso.with(getContext())
                         .load(movies.get(position).getPosterPath())
-                    //    .centerCrop()
                         .resize(imgWidth, imgHeight)
+                        .error(R.drawable.error)
                         .into(imageView);
             }
 
         } else {
-            gridView = (View) convertView;
+            gridView = convertView;
         }
-
         return gridView;
     }
-
 }

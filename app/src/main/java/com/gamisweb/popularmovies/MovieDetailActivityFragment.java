@@ -67,22 +67,17 @@ public class MovieDetailActivityFragment extends Fragment {
         //get all of our activity objects
         View rootView = inflater.inflate(R.layout.fragment_movie_detail_activity, container, false);
         ImageView imageView = (ImageView) rootView.findViewById(R.id.movie_detail_poster);
-        //get screen information to set size of viewImage
-
 
         //Duplicate code from main activity, not sure how to cache images from initial call...
         //TODO Optimize this code to use cached images from Picasso
         //Calculate window size for setting
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
+        DisplayUtil dispUtil = new DisplayUtil((getContext()));
+        int width = dispUtil.getDisplaySize().x;
         width = (int) width/2;
-
         Picasso.with(mContext)
                 .load(currentMovie.getPosterPath())
-                .resize(width,(int)(width*1.5))
+                .resize(width, (int) (width * 1.5))
+                .error(R.drawable.error)
                 .into(imageView);
 
         TextView detailTitleTextView = (TextView)rootView.findViewById(R.id.movie_detail_title);
@@ -102,5 +97,4 @@ public class MovieDetailActivityFragment extends Fragment {
             overviewTextView.setText(currentMovie.getOverview());
         return rootView;
     }
-
 }

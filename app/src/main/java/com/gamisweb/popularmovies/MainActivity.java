@@ -4,18 +4,13 @@
 
 package com.gamisweb.popularmovies;
 
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 /**
  * Proivdes starting point for application.  Must be identified in Manifest as such.

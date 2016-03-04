@@ -33,7 +33,7 @@ proguard/
 captures/
 
 # Intellij
-.idea/
+*.idea/
 
 #My Ignores
 API_KEY.xml

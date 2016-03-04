@@ -6,7 +6,6 @@ package com.gamisweb.popularmovies;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
 
 /**
  * Activity that maintains the {@link MovieDetailActivityFragment} that displays detailed information

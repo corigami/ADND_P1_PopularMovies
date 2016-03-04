@@ -94,8 +94,6 @@ public class Movie implements Serializable {
         this.image = image;
     }
 
-
-
     public void setTitle(String title) {
         this.title = title;
     }

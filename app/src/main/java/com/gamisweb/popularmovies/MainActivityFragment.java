@@ -3,24 +3,20 @@
  */
 package com.gamisweb.popularmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -57,7 +53,6 @@ public class MainActivityFragment extends Fragment {
         setHasOptionsMenu(true);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
-
 
     /**
      * Called when the option menu is created.
@@ -125,7 +120,6 @@ public class MainActivityFragment extends Fragment {
         getMovieData();
     }
 
-
     /**
      * Starts the background request for movie data based on sort settings.
      */
@@ -144,7 +138,6 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected ArrayList<Movie> doInBackground(String... params) {
-            Log.v(LOG_TAG, "do'n in background");
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
@@ -177,8 +170,8 @@ public class MainActivityFragment extends Fragment {
                     // Nothing to do.
                     return null;
                 }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
 
+                reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
@@ -194,7 +187,7 @@ public class MainActivityFragment extends Fragment {
                 movieJsonStr = buffer.toString();
 
             } catch (IOException e) {
-                Log.e("LOG_TAG", "Error ", e);
+                Log.e("LOG_TAG", "Failed to retrieve data from TMDB ", e);
                 // If the code didn't successfully get the movie data, there's no point in attempting
                 // to parse it.
                 return null;
@@ -232,7 +225,6 @@ public class MainActivityFragment extends Fragment {
                         movieAdapter.clear();
                         movieAdapter.addAll(results);
                         ((GridView) getView().findViewById(R.id.gridview)).setAdapter(movieAdapter);
-
                     }
                 }
 
@@ -257,11 +249,10 @@ public class MainActivityFragment extends Fragment {
 
             JSONObject movieJson = new JSONObject(movieJsonStr);
             JSONArray movieJsonArray = movieJson.getJSONArray(TMDB_RESULTS);
-
             ArrayList<Movie> tempArrayList = new ArrayList<Movie>();
 
-
-
+            //for each entry in our JSON array, build a movie object and add it to the array list
+            //to be passed to the on onPostExecute method.
             for (int i = 0; i < movieJsonArray.length(); i++) {
                 JSONObject tempJsonObj = movieJsonArray.getJSONObject(i);
                 String tempId = tempJsonObj.getString(TMDB_ID);
@@ -276,12 +267,12 @@ public class MainActivityFragment extends Fragment {
                     tempMovie.setVoteAvg(Math.round(voteAvg));
                     tempMovie.setOverview(tempJsonObj.getString(TMDB_OVERVIEW));
                     //build the path to use with Picasso
-                    String urlString = "http://image.tmdb.org/t/p/w300/";
+                    //TODO optimize request to take screen resolution into consideration
+                    String urlString = "http://image.tmdb.org/t/p/w300/"; //using 300width as recommended size looks bad on high dpi screens
                     urlString += tempJsonObj.getString(TMDB_POSTER_PATH);
                     tempMovie.setPosterPath(urlString);
                     tempMovie.setReleaseDate(tempJsonObj.getString(TMDB_RELEASE));
                     tempArrayList.add(tempMovie);
-
                 }
             }
             return tempArrayList;
